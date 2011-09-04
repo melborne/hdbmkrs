@@ -1,0 +1,5 @@
+%h2#title= APP_TITLE
+%form{:action => "/#{@user}", :method => 'post'}
+  %input{:type => "text", :name => :user}
+  %input{:type => "submit", :value => "OK"}
+%footer

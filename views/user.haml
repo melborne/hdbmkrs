@@ -1,0 +1,8 @@
+%p= @user
+%p= @total
+#markers
+  -@markers.each do |ent|
+    %a{:href => "#{ent[:url]}"}= "#{ent[:count]}: #{ent[:key]}"
+#entries
+  -@entries.each do |ent|
+    %a{:href => "#{ent[:url]}"}= "#{ent[:count]}: #{ent[:key]}"
