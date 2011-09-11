@@ -1,13 +1,11 @@
 # encoding: UTF-8
 require "./lib/bookmarks"
-require "dalli"
 require "json"
-require "sinatra"
 
 set :cache, Dalli::Client.new(ENV['MEMCACHE_SERVERS'],
                               :username => ENV['MEMCACHE_USERNAME'],
                               :password => ENV['MEMCACHE_PASSWORD'],
-                              :expires_in => 60*60*24)
+                              :expires_in => 1.day)
 
 configure do
   APP_TITLE = "Hatena Bookmarkers"
@@ -57,13 +55,16 @@ helpers do
       if total == 0
         nil
       elsif total == memcache("total/#{user}").to_i
+        puts '--cached data used--'
         memcache("#{user}")
       else
+        puts '--data cached--'
         ds = hb.dataset
         set_memcache(user, ds, total)
       end
     [val, total]
   rescue
+    puts '--memchache not work--'
     [hb.dataset, total]
   end
 
