@@ -51,6 +51,7 @@ helpers do
   def dataset(user)
     hb = Hatena::Bookmarks.new(user)
     total = hb.total
+    puts "--total: #{total}--"
     val =
       if total == 0
         nil
