@@ -7,7 +7,7 @@ require "sinatra"
 set :cache, Dalli::Client.new(ENV['MEMCACHE_SERVERS'],
                               :username => ENV['MEMCACHE_USERNAME'],
                               :password => ENV['MEMCACHE_PASSWORD'],
-                              :expires_in => 1.day)
+                              :expires_in => 60*60*24)
 
 configure do
   APP_TITLE = "Hatena Bookmarkers"
