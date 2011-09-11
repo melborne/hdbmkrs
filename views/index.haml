@@ -1,5 +1,16 @@
-%h2#title= APP_TITLE
-%form{:action => "/#{@user}", :method => 'post'}
-  %input{:type => "text", :name => :user}
-  %input{:type => "submit", :value => "OK"}
-%footer
+!!! 5
+%html
+  %head
+    %meta{:charset => 'utf-8'}
+    %title= APP_TITLE
+    %link{:rel => 'stylesheet', :href => '/style.css'}
+    %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"}
+  %body
+    #title
+      %p Hatena Bookmarkers
+      %p for
+    %form{:action => "/#{@user}", :method => 'post'}
+      %input#input{:type => "text", :name => :user}
+      %input#button{:type => "submit", :value => "OK"}
+    %footer
+      %a{:href => BLOG[:url]}= BLOG[:title]

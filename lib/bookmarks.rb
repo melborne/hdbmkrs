@@ -1,4 +1,5 @@
 # encoding: UTF-8
+
 require_relative "extensions"
 requires :'open-uri', :nokogiri, :cgi
 
@@ -25,22 +26,12 @@ module Hatena
 
     def get_dataset(paths)
       htmls = Array(paths).thread_with { |path| open path }
-      @dataset = htmls.inject([]) { |mem, html| mem += parse(html) }.uniq
+      htmls.inject([]) { |mem, html| mem += parse(html) }
+           .uniq.sort_by { |h| h[:time] }.reverse
     rescue OpenURI::HTTPError => e
       STDERR.puts "HTTP Access Error:#{e}"
-      exit
-    rescue Errno::ENOENT => e
+    rescue Exception => e
       STDERR.puts e
-      exit
-    end
-
-    # key must in :url, :title, :marker, :tags, :note, :time
-    # accept block for filtering key or value of the data
-    def stat_by(key, &blk)
-      dataset.map { |ent| ent[key] }
-             .inject(Hash.new(0)) { |h, k| h[k] +=1; h }
-             .select { |k, cnt| blk ? yield(k, cnt) : true  }
-             .sort_by { |_,v| -v }
     end
 
     private
@@ -49,7 +40,6 @@ module Hatena
       client.call("bookmark.getTotalCount", url)
     rescue => e
       STDERR.puts "Fail to get Total number of Bookmarks: #{e}"
-      exit
     end
 
     def HOST(target)

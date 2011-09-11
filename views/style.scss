@@ -1,3 +1,4 @@
+$font_color: #3E606F;
 * {
   margin: 0;
   padding: 0;
@@ -5,16 +6,55 @@
 }
 
 body {
-  color: #85DB18;
-  background-color: #262626;
-  margin: 60px auto;
+  color: $font_color;
+  background-color: #D1DBBD;
+  margin: 20px auto;
+  text-align: center;
+  #title {
+    margin-top: 100px;
+    font-size: 24pt;
+  }
+  form {
+    margin: 30px auto;
+    margin-left: 40px;
+    margin-bottom: 60px;
+    #input {
+      width: 300px;
+      height: 30px;
+      font-size: 20pt;
+      text-align: center;
+    }
+    #button {
+      width: 40px;
+    }
+  }
+  footer {
+    clear: both;
+    height: 40px;
+    padding-top: 20px;
+    a {
+      text-decoration: none;
+      color: $font_color;
+      &:visited{
+        color: $font_color;
+      };
+    }
+  }
+
 }
 
-#title {
-  margin-left: 30px;
-  margin-bottom: 20px;
+canvas#processing {
+  margin: 10px auto;
 }
 
-form {
-  margin-left: 30px;
+#username {
+  font-size: 28pt;
+  text-align: center;
+}
+
+#loading {
+  display: none;
+  position: absolute;
+  left: 49%;
+  top: 45%;
 }

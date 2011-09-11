@@ -9,18 +9,16 @@ class TestBookmarks < Test::Unit::TestCase
     @bm = Hatena::Bookmarks.new(:keyesberry)
   end
 
-  def test_dataset_with_file
-    path = Dir.pwd + '/test'
-    @bm.get_dataset([path+'/keyesberry0.html', path+'/keyesberry1539.html'])
-    p @bm.stat_by(:marker) { |k, i| i > 0 }
-    p @bm.stat_by(:tags) { |k, i| k.include? 'ruby' }
-  end
+  # def test_dataset_with_file
+  #   path = Dir.pwd + '/test'
+  #   @bm.get_dataset([path+'/keyesberry0.html', path+'/keyesberry1539.html'])
+  #   p @bm.stat_by(:marker) { |k, i| i > 0 }
+  #   p @bm.stat_by(:tags) { |k, i| k.include? 'ruby' }
+  # end
 
   def test_dataset
-    @bm.clear
-    @bm.dataset
-    p @bm.stat_by(:marker) { |k, i| i > 3 }
-    p @bm.stat_by(:title) { |k, i| i > 10 }
+    # @bm.clear
+    p @bm.dataset
   end
 
   def test_total

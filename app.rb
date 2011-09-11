@@ -1,5 +1,8 @@
 # encoding: UTF-8
 require "./lib/bookmarks"
+require "dalli"
+require "json"
+require "sinatra"
 
 set :cache, Dalli::Client.new(ENV['MEMCACHE_SERVERS'],
                               :username => ENV['MEMCACHE_USERNAME'],
@@ -7,7 +10,8 @@ set :cache, Dalli::Client.new(ENV['MEMCACHE_SERVERS'],
                               :expires_in => 1.day)
 
 configure do
-  APP_TITLE = "HateDa Bookmark Stars"
+  APP_TITLE = "Hatena Bookmarkers"
+  BLOG = {title: "hp12c", url: "http://d.hatena.ne.jp/keyesberry"}
 end
 
 get '/style.css' do
@@ -15,7 +19,7 @@ get '/style.css' do
 end
 
 get '/' do
-  haml :index
+  haml :index, :layout => false
 end
 
 post '/' do
@@ -23,59 +27,61 @@ post '/' do
   redirect "/#{user}"
 end
 
+get '/:user.json' do |user|
+  redirect '/' unless request.xhr?
+  content_type :json
+  
+  dataset, total = dataset(user.intern)
+  if dataset
+    data = group_by_top(:marker, 20, dataset)
+    {data: data, total: total}.to_json
+  else
+    nil
+  end
+end
+
 get '/:user' do
   @user = params[:user].intern
-  @dataset = dataset
-  markers = stat_by(:marker) { |k, cnt| cnt > 3 }
-  @markers = map_url(markers, :marker)
-  entries = stat_by(:title) { |k, cnt| cnt > 10 }
-  @entries = map_url(entries, :entry)
 
   haml :user
 end
 
 helpers do
-  def dataset
-    hb = Hatena::Bookmarks.new(@user)
-    @total = hb.total
-    if @total == memcache("total/#{@user}").to_i
-      memcache("#{@user}")
-    else
-      memcache = hb.dataset
-    end
+  include Rack::Utils
+  alias_method :h, :escape_html
+  
+  def dataset(user)
+    hb = Hatena::Bookmarks.new(user)
+    total = hb.total
+    val =
+      if total == 0
+        nil
+      elsif total == memcache("total/#{user}").to_i
+        memcache("#{user}")
+      else
+        ds = hb.dataset
+        set_memcache(user, ds, total)
+      end
+    [val, total]
+  rescue
+    [hb.dataset, total]
   end
 
-  # key must in :url, :title, :marker, :tags, :note, :time
-  # accept block for filtering key or value of the data
-  def stat_by(key, &blk)
-    @dataset.map { |ent| ent[key] }
-            .inject(Hash.new(0)) { |h, k| h[k] +=1; h }
-            .select { |k, cnt| blk ? yield(k, cnt) : true  }
-            .sort_by { |_,v| -v }
-  end
-
-  def map_url(data, type)
-    data.map do |key, n|
-      url =
-        case type
-        when :entry;  @dataset.detect { |h| h[:title] == key }[:url]
-        when :marker; "http://d.hatena.ne.jp/#{key}"
-        else
-          raise ArgumentError, "type not found."
-        end
-      {key: key, url: url, count: n}
-    end
+  # {marker => [{:url,:title,:marker,:tags,:note,:time},{ }]}
+  def group_by_top(key, n, dataset)
+    return {} unless dataset
+    grouped = dataset.group_by { |h| h[key] }.sort_by { |k, v| -v.size }.take(n)
+    Hash[grouped]
   end
 
   def memcache(key)
     settings.cache.get(key)
   end
 
-  def memcache=(val)
-    settings.cache.set("total/#{@user}", @total)
-    settings.cache.set("#{@user}", val)
+  def set_memcache(user, val, total)
+    settings.cache.set("total/#{user}", total)
+    settings.cache.set("#{user}", val)
     val
   end
 end
-
 
