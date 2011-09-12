@@ -60,7 +60,7 @@ class HateDa::Bookmarks
   end
 
   def MAX_PAGES
-    150
+    100
   end
 
   def parse(html)
