@@ -49,7 +49,7 @@ helpers do
   alias_method :h, :escape_html
   
   def dataset(user)
-    hb = Hatena::Bookmarks.new(user)
+    hb = HateDa::Bookmarks.new(user)
     total = hb.total
     puts "--total: #{total}--"
     val =
