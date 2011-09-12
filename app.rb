@@ -1,11 +1,11 @@
 # encoding: UTF-8
-require "./lib/bookmarks"
+require "./lib/hateda"
 require "json"
 
-set :cache, Dalli::Client.new #(ENV['MEMCACHE_SERVERS'],
-                              # :username => ENV['MEMCACHE_USERNAME'],
-                              # :password => ENV['MEMCACHE_PASSWORD'],
-                              # :expires_in => 1.day)
+set :cache, Dalli::Client.new(ENV['MEMCACHE_SERVERS'],
+                              :username => ENV['MEMCACHE_USERNAME'],
+                              :password => ENV['MEMCACHE_PASSWORD'],
+                              :expires_in => 1.day)
 
 configure do
   APP_TITLE = "Hatena Bookmarkers"

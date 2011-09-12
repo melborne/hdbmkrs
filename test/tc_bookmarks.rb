@@ -1,6 +1,6 @@
 require "test/unit"
 
-require_relative "../lib/bookmarks"
+require_relative "../lib/hateda"
 require "pp"
 
 class TestBookmarks < Test::Unit::TestCase
@@ -8,13 +8,6 @@ class TestBookmarks < Test::Unit::TestCase
     @total = 1612
     @bm = Hatena::Bookmarks.new(:keyesberry)
   end
-
-  # def test_dataset_with_file
-  #   path = Dir.pwd + '/test'
-  #   @bm.get_dataset([path+'/keyesberry0.html', path+'/keyesberry1539.html'])
-  #   p @bm.stat_by(:marker) { |k, i| i > 0 }
-  #   p @bm.stat_by(:tags) { |k, i| k.include? 'ruby' }
-  # end
 
   def test_dataset
     # @bm.clear
