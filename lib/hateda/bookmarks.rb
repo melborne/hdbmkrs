@@ -60,7 +60,7 @@ class HateDa::Bookmarks
   end
 
   def MAX_PAGES
-    200
+    150
   end
 
   def parse(html)
@@ -76,6 +76,8 @@ class HateDa::Bookmarks
                  tags: tags.split(','), note: note, time: Time.parse(time) }
     end
     q
+  ensure
+    html.close
   end
 
   def CSS(at)
